@@ -22,9 +22,9 @@ router.get('/', function(req, res, next) {
 //Display add Book Page
 router.get('/add', function(req, res, next){
     //render to add.ejs
-    res.render('books/add', {
-        name : '',
-        author: ''
+    res.render("books/add", {
+        name : "",
+        author: "",
     })
 })
 
@@ -50,15 +50,15 @@ router.post('/add', function(req, res, next){
     if(!errors){
         var form_data = {
             name: name,
-            author: author
+            author: author,
         }
         dbConnetion.query("INSERT INTO book set ?", form_data, function(err, result){
             if(err){
                 //Get Error Data
-                req.flash('Error', err)
+                req.flash("Error", err)
 
                 //render to add.ejs
-                res.render('books/add', {
+                res.render("books/add", {
                     name: form_data.name,
                     author: form_data.author
                 })
@@ -75,12 +75,12 @@ router.get('/edit/(:id)', function(req, res, next){
     let id = req.params.id;
 
     //Get Id Data Books
-    dbConnetion.query("SELECT * FROM book where id =" + id, function(err, rows, fields){
+    dbConnetion.query("SELECT * FROM book where id = " + id, function(err, rows, fields){
         if(err) throw err
 
         //if data Not Found
         if(rows.length <= 0){
-            req.flash("error", "Book not Found with id =" + id)
+            req.flash("error", "Book not Found with id = " + id)
             res.redirect("/books")
         }else {
             //Render Edit to edit.ejs

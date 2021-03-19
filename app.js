@@ -4,6 +4,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+
+//Init Require
 var flash = require('express-flash');
 var session = require('express-session');
 var mysql = require('mysql');
@@ -25,6 +27,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+//Seting
 app.use(session({ 
   cookie: { maxAge: 60000 },
   store: new session.MemoryStore,

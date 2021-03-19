@@ -1,5 +1,4 @@
-//Setup Depedency
-var express = require('express')
+var express = require('express');
 var router = express.Router();
 var dbConnetion = require('../lib/db')
 
@@ -73,17 +72,17 @@ router.post('/add', function(req, res, next){
 //Edit Data Book
 router.get('/edit/(:id)', function(req, res, next){
     let id = req.params.id;
+    // let errors = false
 
     //Get Id Data Books
-    dbConnetion.query("SELECT * FROM book where id = " + id, function(err, rows, fields){
-        if(err) throw err
+    dbConnetion.query("SELECT * FROM book WHERE id = " + id, function(err, rows, fields){
+        if(err) throw err;
 
         //if data Not Found
         if(rows.length <= 0){
             req.flash("error", "Book not Found with id = " + id)
             res.redirect("/books")
-        }else {
-            //Render Edit to edit.ejs
+        }else{
             res.render("books/edit", {
                 title: "Edit Book",
                 id: rows[0].id,
@@ -91,30 +90,52 @@ router.get('/edit/(:id)', function(req, res, next){
                 author: rows[0].author,
             })
         }
-        
-
-        //Store Data to Db
-        if(!errors){
-            var form_data = {name: name, author:author}
-            dbConnetion.query("UPDATE book set ? where id =" + id, form_data, function(err, result){
-
-                //if(err) throw error
-                if(err){
-                    req.flash("error", err)
-                    res.render("books/edit", {
-                        id: req.params.id,
-                        name: req.params.name,
-                        author: req.params.author
-                    })
-                }
-            })
-        } else {
-            req.flash("Success", "Book successfully update");
-            req.redirect("/books");
-        }
     })
 })
 
+
+//Update Func
+router.post("/update/:id", function(req, res, next){
+    let id = req.params.id;
+    let name = req.body.name;
+    let author = req.body.author;
+    let errors = false;
+
+    if(name.length === 0 || author.length === 0){
+        errors = true;
+        //set Flash Message
+        req.flash('Error', "Please enter name and author");
+
+        //render Response Error
+        res.render('books/edit', {
+            id: req.params.id,
+            name : name,
+            author : author
+        })
+    }
+
+    if(!errors){
+        var form_data = {name:name, author:author};
+        dbConnetion.query("UPDATE book SET ? WHERE id =" + id, form_data, function(err, result){
+    
+            //if(err) throw error
+            if(err){
+                req.flash("error", err)
+    
+                res.render("books/edit", {
+                    id: req.params.id,
+                    name: form_data.name,
+                    author: form_data.author
+                })
+            }else {
+                req.flash("Success", "Book successfully update");
+                res.redirect("/books");
+            }
+        }
+    )
+    }
+})
+ 
 
 //delet book
 router.get('/delete/(:id)', function(req, res, next){
